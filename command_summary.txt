@@ -1,0 +1,7 @@
+list                    list transcripts
+open ([args] "name")    open default transcript 
+    -t                  open specified transcript instead
+    -d                  set default to specified
+----====<<<<====>>>>====----
+addc "id"               add course
+close                   close transcript

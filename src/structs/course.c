@@ -50,12 +50,31 @@ void course_mark_completed(struct course *course, bool completed) {
 
 float course_grade_points(struct course *course) {
     if (course == NULL) exit(EXIT_ALLOC_FAIL);
+    if (course->grade == UNGRADED) return -1;
     return course->grade * course->credits / 10.;
 }
 
 float course_max_grade_points(struct course *course) {
     if (course == NULL) exit(EXIT_ALLOC_FAIL);
-    return A * course->credits / 10.;
+    return GRADE_A * course->credits / 10.;
+}
+
+static const char *grade_to_str(enum grade grade) {
+    switch (grade) {
+        case GRADE_A:  return "A";
+        case GRADE_Am: return "A-";
+        case GRADE_Bp: return "B+";
+        case GRADE_B:  return "B";
+        case GRADE_Bm: return "B-";
+        case GRADE_Cp: return "C+";
+        case GRADE_C:  return "C";
+        case GRADE_Cm: return "C-";
+        case GRADE_Dp: return "D+";
+        case GRADE_D:  return "D";
+        case GRADE_F:  return "F";
+        case UNGRADED: return "-";
+        default:       return "x";
+    }
 }
 
 char *course_alloc_details(struct course *course) {
@@ -63,12 +82,13 @@ char *course_alloc_details(struct course *course) {
     char *out = malloc(MAX_LEN * sizeof(char));
     if (out == NULL) exit(EXIT_ALLOC_FAIL);
 
-    sprintf_s(out, MAX_LEN, "s>[%c] %s%d: (%d) $%s", 
+    char grade[3];
+    sprintf(out, "s>[%c] %s%d: %s$%s (%dcr)", 
         course->completed ? 'x' : '_',
         course->subject,
-        course->credits,
         course->id,
         course->title,
-        course->grade);
+        grade_to_str(course->grade),
+        course->credits);
     return out;
 }

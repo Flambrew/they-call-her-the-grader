@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "structs/course.h"
 #include "utils/printer.h"
 
 struct transcript {
@@ -37,13 +38,18 @@ const char *TXT_ENTRY = "f>+-\n" \
         "f>+-";
 
 int main(const int argc, const char** argv) {
+
+    struct course *course_test = course_alloc("CS", 2505, "Introduction to Computer Organization", 3);
+    course_regrade(course_test, GRADE_A);
+
+    char *output = course_alloc_details(course_test);
+
     int *fail;
-    if (print(TXT_ENTRY, fail) == FAIL) {
+    if (print(output, fail) == FAIL) {
         exit(2);
     }
 
-    // enum command_state state = STARTUP;
-    // while (command_parse(argc, argv, state));
-    // return 0;
+    course_free(course_test);
+    free(output);
 }
 

@@ -2,18 +2,18 @@
 #include <stdint.h>
 
 enum grade {
-    UNGRADED,
-    A  = 40,
-    Am = 37,
-    Bp = 33,
-    B  = 30,
-    Bm = 27,
-    Cp = 23,
-    C  = 20,
-    Cm = 17,
-    Dp = 13,
-    D  = 10,
-    F  = 0
+    UNGRADED = -1,
+    GRADE_A  = 40,
+    GRADE_Am = 37,
+    GRADE_Bp = 33,
+    GRADE_B  = 30,
+    GRADE_Bm = 27,
+    GRADE_Cp = 23,
+    GRADE_C  = 20,
+    GRADE_Cm = 17,
+    GRADE_Dp = 13,
+    GRADE_D  = 10,
+    GRADE_F  = 0
 };
 
 struct course {
@@ -54,7 +54,7 @@ void course_regrade(struct course *course, enum grade grade);
 void course_mark_completed(struct course *course, bool completed);
 
 /**
- * Get the current grade point value of this course
+ * Get the current grade point value of this course, -1 if no grade.
  */
 float course_grade_points(struct course *course);
 

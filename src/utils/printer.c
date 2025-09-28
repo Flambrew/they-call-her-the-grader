@@ -6,9 +6,8 @@
 static const uint8_t TAB_LEN = 8;
 static const uint8_t FORMAT = 2;
 static const uint8_t TERMINATOR = 1;
-static const uint8_t LINE = 80;
 
-const uint8_t MAX_LEN = FORMAT + TERMINATOR + LINE;
+const uint8_t MAX_LEN = FORMAT + TERMINATOR + MAX_CHARS_PER_LINE;
 const char DELIMITER = '$';
 
 static enum result ln_print(const char *text, const int len) {
@@ -17,13 +16,13 @@ static enum result ln_print(const char *text, const int len) {
     }
 
     uint8_t i, pad;
-    char pad_str[LINE];
+    char pad_str[MAX_CHARS_PER_LINE];
     switch(text[0]) {
         case 'l': pad = 0; break;
         case 'c': pad = (MAX_LEN - len) / 2; break;
         case 'r': pad = MAX_LEN - len; break;
         case 's': {
-            char left[LINE], right[LINE];
+            char left[MAX_CHARS_PER_LINE], right[MAX_CHARS_PER_LINE];
             uint8_t j = FORMAT, l_len = 0, r_len = 0;
             for (i = 0; text[j] != DELIMITER; ++i, ++j, ++l_len) {
                 if (j == len) return FAIL;
@@ -38,7 +37,7 @@ static enum result ln_print(const char *text, const int len) {
             }
             right[i] = '\0';
 
-            pad = LINE - l_len - r_len;
+            pad = MAX_CHARS_PER_LINE - l_len - r_len;
             for (i = 0; i < pad; ++i) {
                 pad_str[i] = ' ';
             }
@@ -48,7 +47,7 @@ static enum result ln_print(const char *text, const int len) {
             return PASS;
         }
         case 'x': {
-            char left[LINE], center[LINE], right[LINE], pad_str_b[LINE];
+            char left[MAX_CHARS_PER_LINE], center[MAX_CHARS_PER_LINE], right[MAX_CHARS_PER_LINE], pad_str_b[MAX_CHARS_PER_LINE];
             uint8_t j = FORMAT, l_len = 0, c_len = 0, r_len = 0, pad_b;
             for (i = 0; text[j] != DELIMITER; ++i, ++j, ++l_len) {
                 if (j == len) return FAIL;
@@ -70,8 +69,8 @@ static enum result ln_print(const char *text, const int len) {
             }
             right[i] = '\0';
 
-            pad = (LINE - l_len - c_len - r_len) / 2;
-            pad_b = (LINE - l_len - c_len - r_len) - pad;
+            pad = (MAX_CHARS_PER_LINE - l_len - c_len - r_len) / 2;
+            pad_b = (MAX_CHARS_PER_LINE - l_len - c_len - r_len) - pad;
 
             for (i = 0; i < pad; ++i) 
                 pad_str[i] = ' ';
@@ -86,7 +85,7 @@ static enum result ln_print(const char *text, const int len) {
         case 'f':
             if (len != FORMAT + TERMINATOR + 2) 
                 return FAIL;
-            for (i = 0; i < LINE - 2; ++i) 
+            for (i = 0; i < MAX_CHARS_PER_LINE - 2; ++i) 
                 pad_str[i] = text[3];
             printf("%c%s%c\n", text[2], pad_str, text[2]);
             return PASS;

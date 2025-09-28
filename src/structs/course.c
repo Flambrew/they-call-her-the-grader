@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../utils/printer.h"
+#include "../globals.h"
 #include "course.h"
 
 uint32_t calculate_uid(char *subject, uint16_t id) {
@@ -79,7 +79,7 @@ static const char *grade_to_str(enum grade grade) {
 
 char *course_alloc_details(struct course *course) {
     if (course == NULL) exit(EXIT_ALLOC_FAIL);
-    char *out = malloc(MAX_LEN * sizeof(char));
+    char *out = malloc(sizeof(char) * MAX_CHARS_PER_LINE * 2);
     if (out == NULL) exit(EXIT_ALLOC_FAIL);
 
     sprintf(out, "s>[%c] %s%d: %s$%s (%dcr)", 

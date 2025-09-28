@@ -1,7 +1,5 @@
 #include <stdlib.h>
-#include <time.h>
 
-#include "../globals.h"
 #include "transcript.h"
 
 static const uint8_t MAX_COURSES = 10;
@@ -39,7 +37,7 @@ static enum result semester_add_course(struct semester *semester, struct course 
 static enum result semester_rem_course(struct semester *semester, uint32_t course_uid) {
     if (semester == NULL) exit(EXIT_ALLOC_FAIL);
     
-    uint8_t i, j;
+    uint8_t i;
     for (i = 0; i < semester->course_count; ++i) {
         if (semester->courses[i]->uid == course_uid) {
             course_free(semester->courses[i]);
@@ -57,6 +55,20 @@ static enum result semester_rem_course(struct semester *semester, uint32_t cours
 
     --semester->course_count;
     return PASS;
+}
+
+static enum result semester_regrade(struct semester *semester, uint32_t course_uid, enum grade grade) {
+    if (semester == NULL) exit(EXIT_ALLOC_FAIL);
+    
+    uint8_t i;
+    for (i = 0; i < semester->course_count; ++i) {
+        if (semester->courses[i]->uid == course_uid) {
+            course_regrade(semester->courses[i], grade);
+            return PASS;
+        }
+    }
+
+    return FAIL;
 }
 
 struct transcript *transcript_alloc() {
@@ -103,7 +115,7 @@ void transcript_add_transfer(struct transcript *transcript, struct course *cours
     transcript->transfer_courses[transcript->transfer_course_count++] = course;
 }
 
-void transcript_rem_transfer(struct transcript *transcript, uint32_t course_uid) {
+enum result transcript_rem_transfer(struct transcript *transcript, uint32_t course_uid) {
     if (transcript == NULL) exit(EXIT_ALLOC_FAIL);
 
     uint8_t i;
@@ -114,11 +126,14 @@ void transcript_rem_transfer(struct transcript *transcript, uint32_t course_uid)
         }
     }
 
+    if (i == transcript->transfer_course_count) return FAIL;
+
     while (i < transcript->transfer_course_count - 1) {
         transcript->transfer_courses[i] = transcript->transfer_courses[i + 1];
     }
 
     --transcript->transfer_course_count;
+    return PASS;
 }
 
 void transcript_add_semester(struct transcript *transcript) {
@@ -133,32 +148,28 @@ void transcript_rem_semester(struct transcript *transcript) {
     semester_free(transcript->semesters[--transcript->semester_count]);
 }
 
-void transcript_add_course(struct transcript *transcript, uint8_t semester, struct course *course) {
+void transcript_add_course(struct transcript *transcript, int8_t semester, struct course *course) {
     if (transcript == NULL || course == NULL) exit(EXIT_ALLOC_FAIL);
     if (semester == -1) semester = transcript->current_semester;
 
     semester_add_course(transcript->semesters[semester], course);
 }
 
-void transcript_rem_course(struct transcript *transcript, uint8_t semester, uint32_t course_uid) {
+enum result transcript_rem_course(struct transcript *transcript, int8_t semester, uint32_t course_uid) {
     if (transcript == NULL) exit(EXIT_ALLOC_FAIL);
-
-
-    if (semester != -1) {
-        semester_rem_course(transcript->semesters[semester], course_uid);
-    }
-
-    uint8_t i;
-    for (i = 0; i < transcript->semester_count; ++i) {
-        semester_rem_course(transcript->semesters[i], course_uid);
-    }
+    if (semester != -1) semester = transcript->current_semester;
+    
+    return semester_rem_course(transcript->semesters[semester], course_uid);
 }
 
-void transcript_change_grade(struct transcript *transcript, uint8_t semester, uint32_t course_uid, enum grade grade) {
+enum result transcript_regrade(struct transcript *transcript, int8_t semester, uint32_t course_uid, enum grade grade) {
+    if (transcript == NULL) exit(EXIT_ALLOC_FAIL);
+    if (semester != -1) semester = transcript->current_semester;
 
+    return semester_regrade(transcript->semesters[semester], course_uid, grade);
 }
 
-void transcript_set_semester(struct transcript *transcript, uint8_t current_semester) {
+void transcript_set_semester(struct transcript *transcript, int8_t current_semester) {
     if (transcript == NULL) exit(EXIT_ALLOC_FAIL);
 
     transcript->current_semester = current_semester;

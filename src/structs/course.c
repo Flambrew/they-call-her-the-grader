@@ -15,9 +15,9 @@ uint32_t calculate_uid(char *subject, uint16_t id) {
         }
         subj[i] = '@';
     }
-    return ((subject[0] - 0x40) << 26)
-            + ((subject[2] - 0x40) << 21)
-            + ((subject[3] - 0x40) << 16)
+    return ((subj[0] - 0x40) << 26)
+            + ((subj[2] - 0x40) << 21)
+            + ((subj[3] - 0x40) << 16)
             + id;
 }
 
@@ -82,7 +82,6 @@ char *course_alloc_details(struct course *course) {
     char *out = malloc(MAX_LEN * sizeof(char));
     if (out == NULL) exit(EXIT_ALLOC_FAIL);
 
-    char grade[3];
     sprintf(out, "s>[%c] %s%d: %s$%s (%dcr)", 
         course->completed ? 'x' : '_',
         course->subject,

@@ -4,4 +4,6 @@ open ([args] "name")    open default transcript
     -d                  set default to specified
 ----====<<<<====>>>>====----
 addc "id"               add course
+rmc "id" [args]         remove course
+    -s "semester"       
 close                   close transcript

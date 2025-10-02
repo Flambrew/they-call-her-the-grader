@@ -22,4 +22,4 @@ main.o: src/main.c src/structs/course.h src/structs/transcript.h
 
 .PHONY: clean
 clean:
-	rm -f grader $(objects)
+	rm -f $(objects)
